@@ -48,7 +48,7 @@ promotionRouter
   });
 
 promotionRouter
-  .route("/promotions/:promotionId")
+  .route("/:promotionId")
   .all((req, res, next) => {
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/plain");

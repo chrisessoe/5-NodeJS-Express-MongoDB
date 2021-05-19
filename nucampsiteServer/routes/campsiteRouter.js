@@ -32,7 +32,7 @@ campsiteRouter
     next();
   })
   .get((req, res) => {
-    res.end("Will send all the campsites to you");
+    res.end("Will send all the campsites to you!");
   })
   .post((req, res) => {
     res.statusCode = 403;

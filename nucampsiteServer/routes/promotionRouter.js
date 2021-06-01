@@ -51,7 +51,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res) => {
+  .post(authenticate.verifyUser, authenticate.verfiyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end(
       `POST operation not supported on /promotions/${req.params.promotionId}`
@@ -62,15 +62,19 @@ promotionRouter
       `Will add the promotion: ${req.body.name} with description: ${req.body.description}`
     );
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Promotion.findByIdAndDelete(req.params.promotionId)
-      .then((response) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(response);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verfiyAdmin,
+    (req, res, next) => {
+      Promotion.findByIdAndDelete(req.params.promotionId)
+        .then((response) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(response);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 promotionRouter
   .route("/:promotionId")
@@ -89,7 +93,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verfiyAdmin, (req, res, next) => {
     Promotion.findById(req.params.promotionId)
       .then((promotion) => {
         if (promotion) {
@@ -115,28 +119,32 @@ promotionRouter
       `PUT operation not supported on /promotions/${req.params.promotionId}/comments`
     );
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Promotion.findById(req.params.promotionId)
-      .then((promotion) => {
-        if (promotion) {
-          for (let i = promotion.comments.length - 1; i >= 0; i--) {
-            promotion.comments.id(promotion.comments[i]._id).remove();
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verfiyAdmin,
+    (req, res, next) => {
+      Promotion.findById(req.params.promotionId)
+        .then((promotion) => {
+          if (promotion) {
+            for (let i = promotion.comments.length - 1; i >= 0; i--) {
+              promotion.comments.id(promotion.comments[i]._id).remove();
+            }
+            promotion
+              .save()
+              .then((promotion) => {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.json(promotion);
+              })
+              .catch((err) => next(err));
+          } else {
+            err = new Error(`Promotion ${req.params.promotionId} not found`);
+            err.status = 404;
+            return next(err);
           }
-          promotion
-            .save()
-            .then((promotion) => {
-              res.statusCode = 200;
-              res.setHeader("Content-Type", "application/json");
-              res.json(promotion);
-            })
-            .catch((err) => next(err));
-        } else {
-          err = new Error(`Promotion ${req.params.promotionId} not found`);
-          err.status = 404;
-          return next(err);
-        }
-      })
-      .catch((err) => next(err));
-  });
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = promotionRouter;

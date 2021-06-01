@@ -57,7 +57,7 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res) => {
+  .post(authenticate.verifyUser, authenticate.verfiyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /partners");
   })
@@ -77,15 +77,19 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Partner.findByIdAndDelete(req.params.PartnerId)
-      .then((response) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(response);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verfiyAdmin,
+    (req, res, next) => {
+      Partner.findByIdAndDelete(req.params.PartnerId)
+        .then((response) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(response);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 partnerRouter
   .route("/partners/:partnerId")
@@ -104,7 +108,7 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verfiyAdmin, (req, res, next) => {
     Campsite.findById(req.params.campsiteId)
       .then((campsite) => {
         if (campsite) {
@@ -139,14 +143,18 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Partner.findByIdAndDelete(req.params.partnerId)
-      .then((response) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(response);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verfiyAdmin,
+    (req, res, next) => {
+      Partner.findByIdAndDelete(req.params.partnerId)
+        .then((response) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(response);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = partnerRouter;

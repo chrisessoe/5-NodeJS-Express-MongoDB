@@ -1,39 +1,36 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-require("mongoose-currency").loadType(mongoose);
+require('mongoose-currency').loadType(mongoose);
 const Currency = mongoose.Types.Currency;
 
-const promotionSchema = new Schema(
-  {
+const promotionSchema = new Schema({
+
     name: {
-      type: String,
-      required: true,
-      unique: true,
+        type: String,
+        required: true
     },
     image: {
-      type: String,
-      required: true,
+        type:String,
+        required: true
     },
     featured: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false
     },
     cost: {
-      type: Currency,
-      required: true,
-      min: 0,
+        type: Currency,
+        required: true,
+        min: 0
     },
     description: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true
+});
 
-const promotion = mongoose.model("promotion", promotionSchema);
+const Promotion = mongoose.model('Promotion', promotionSchema)
 
-module.exports = promotion;
+module.exports = Promotion;
